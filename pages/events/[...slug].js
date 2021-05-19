@@ -1,5 +1,5 @@
 const FilteredEventsPage = () => {
-  return (  );
-}
+  return 'Filtered Events';
+};
 
 export default FilteredEventsPage;
