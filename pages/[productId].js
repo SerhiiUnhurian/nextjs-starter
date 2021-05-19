@@ -3,7 +3,10 @@ import path from 'path';
 import fs from 'fs/promises';
 
 const ProductDetailPage = ({ product }) => {
-  return (
+  return !product ? (
+    // Fallback
+    <p>Loading...</p>
+  ) : (
     <Fragment>
       <h1>{product.title}</h1>
       <p>{product.description}</p>
@@ -40,7 +43,7 @@ export async function getStaticPaths() {
 
   return {
     paths,
-    fallback: 'blocking',
+    fallback: true,
   };
 }
 
