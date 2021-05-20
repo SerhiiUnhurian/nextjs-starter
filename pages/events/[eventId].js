@@ -1,27 +1,16 @@
 import { Fragment } from 'react';
-import { useRouter } from 'next/router';
-import { getEventById } from '../../dummy-data';
+import { getEventById, getFeaturedEvents } from '../../helpers/api-util';
 import EventContent from '../../components/event-detail/event-content';
 import EventLogistics from '../../components/event-detail/event-logistics';
 import EventSummary from '../../components/event-detail/event-summary';
 import Button from '../../components/ui/button';
-import ErrorAlert from '../../components/ui/error-alert';
 
-const EventDetailPage = () => {
-  const router = useRouter();
-  const { eventId } = router.query;
-  const event = getEventById(eventId);
-
+const EventDetailPage = ({ event }) => {
   if (!event) {
     return (
-      <Fragment>
-        <ErrorAlert>
-          <p>No event fount.</p>
-        </ErrorAlert>
-        <div className="center">
-          <Button link="/events">Show All Events</Button>
-        </div>
-      </Fragment>
+      <div>
+        <p>Loading...</p>
+      </div>
     );
   }
 
@@ -42,3 +31,27 @@ const EventDetailPage = () => {
 };
 
 export default EventDetailPage;
+
+export async function getStaticProps(context) {
+  const { eventId } = context.params;
+  const event = await getEventById(eventId);
+
+  return {
+    props: {
+      event,
+    },
+    revalidate: 60,
+  };
+}
+
+export async function getStaticPaths() {
+  // Pre-generate only for featured events
+  // and non-featured events get generated after a request has been sent
+  const featuredEvent = await getFeaturedEvents();
+  const paths = featuredEvent.map(event => ({ params: { eventId: event.id } }));
+
+  return {
+    paths,
+    fallback: true,
+  };
+}
