@@ -1,35 +1,32 @@
 import { useEffect, useState } from 'react';
+import useSWR from 'swr';
 
-const LastSalesPage = props => {
-  const [sales, setSales] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+const LastSalesPage = () => {
+  const [sales, setSales] = useState();
+
+  const { data, error } = useSWR(
+    'https://next-starter-bc9e6-default-rtdb.europe-west1.firebasedatabase.app/sales.json'
+  );
+
+  if (error) return <div>failed to load</div>;
+  if (!data || !sales) return <div>loading...</div>;
 
   useEffect(() => {
-    setIsLoading(true);
+    if (data) {
+      const sales = [];
 
-    fetch(
-      'https://next-starter-bc9e6-default-rtdb.europe-west1.firebasedatabase.app/sales.json'
-    )
-      .then(response => response.json())
-      .then(data => {
-        const sales = [];
+      for (const [key, value] of Object.entries(data)) {
+        sales.push({
+          id: key,
+          username: value.username,
+          amount: value.amount,
+        });
+      }
+      setSales(sales);
+    }
+  }, [data]);
 
-        for (const [key, value] of Object.entries(data)) {
-          sales.push({
-            id: key,
-            username: value.username,
-            amount: value.amount,
-          });
-        }
-
-        setSales(sales);
-        setIsLoading(false);
-      });
-  }, []);
-
-  return isLoading ? (
-    <h1>Loading...</h1>
-  ) : (
+  return (
     <ul>
       {sales.map(({ id, username, amount }) => (
         <li key={id}>
