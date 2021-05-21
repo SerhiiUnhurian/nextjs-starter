@@ -3,7 +3,7 @@ import { getEventById, getFeaturedEvents } from '../../helpers/api-util';
 import EventContent from '../../components/event-detail/event-content';
 import EventLogistics from '../../components/event-detail/event-logistics';
 import EventSummary from '../../components/event-detail/event-summary';
-import Button from '../../components/ui/button';
+import Head from 'next/head';
 
 const EventDetailPage = ({ event }) => {
   if (!event) {
@@ -16,6 +16,10 @@ const EventDetailPage = ({ event }) => {
 
   return (
     <Fragment>
+      <Head>
+        <title>{event.title}</title>
+        <meta name="description" content={event.description} />
+      </Head>
       <EventSummary title={event.title} />
       <EventLogistics
         date={event.date}

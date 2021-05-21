@@ -5,6 +5,7 @@ import useSWR from 'swr';
 import ResultsTitle from '../../components/events/results-title';
 import Button from '../../components/ui/button';
 import ErrorAlert from '../../components/ui/error-alert';
+import Head from 'next/head';
 
 const FilteredEventsPage = () => {
   const [events, setEvents] = useState();
@@ -30,8 +31,20 @@ const FilteredEventsPage = () => {
     }
   }, [allEvents]);
 
+  let pageHeadData = (
+    <Head>
+      <title>Filtered Events</title>
+      <meta name="description" content={`A list of filtered events.`} />
+    </Head>
+  );
+
   if (!events) {
-    return <p className="center">Loading...</p>;
+    return (
+      <Fragment>
+        {pageHeadData}
+        <p className="center">Loading...</p>
+      </Fragment>
+    );
   }
 
   const year = +filterData[0];
@@ -48,6 +61,7 @@ const FilteredEventsPage = () => {
   ) {
     return (
       <Fragment>
+        {pageHeadData}
         <ErrorAlert>
           <p>Invalid filter!</p>
         </ErrorAlert>
@@ -69,6 +83,7 @@ const FilteredEventsPage = () => {
 
   return filteredEvents.length === 0 ? (
     <Fragment>
+      {pageHeadData}
       <ErrorAlert>
         <p>No events found.</p>
       </ErrorAlert>
@@ -78,6 +93,10 @@ const FilteredEventsPage = () => {
     </Fragment>
   ) : (
     <Fragment>
+      <Head>
+        <title>Filtered Events</title>
+        <meta name="description" content={`Event for ${year}/${month}`} />
+      </Head>
       <ResultsTitle date={date} />
       <EventList items={filteredEvents} />
     </Fragment>
