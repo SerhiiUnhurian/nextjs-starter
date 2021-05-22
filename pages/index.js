@@ -45,7 +45,7 @@ export default function HomePage() {
       </form>
       <hr />
       <button onClick={handleLoadFeedbacks}>Load Feedbacks</button>
-      {feedbackItems.length && (
+      {feedbackItems.length > 0 && (
         <ul>
           {feedbackItems.map(({ id, feedback }) => (
             <li key={id}>{feedback}</li>
