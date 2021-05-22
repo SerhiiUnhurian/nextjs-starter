@@ -6,7 +6,6 @@ class CustomDocument extends Document {
       <Html lang="en">
         <Head />
         <body>
-          // Additional elements that is outside of the App component
           <div id="overlays" />
           <Main />
           <NextScript />

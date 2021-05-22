@@ -4,6 +4,7 @@ import EventContent from '../../components/event-detail/event-content';
 import EventLogistics from '../../components/event-detail/event-logistics';
 import EventSummary from '../../components/event-detail/event-summary';
 import Head from 'next/head';
+import Comments from '../../components/input/comments';
 
 const EventDetailPage = ({ event }) => {
   if (!event) {
@@ -30,6 +31,7 @@ const EventDetailPage = ({ event }) => {
       <EventContent>
         <p>{event.description}</p>
       </EventContent>
+      <Comments eventId={event.id} />
     </Fragment>
   );
 };
@@ -39,6 +41,8 @@ export default EventDetailPage;
 export async function getStaticProps(context) {
   const { eventId } = context.params;
   const event = await getEventById(eventId);
+
+  if (!event) return { notFound: true };
 
   return {
     props: {
