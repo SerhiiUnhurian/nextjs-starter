@@ -1,14 +1,22 @@
-import { MongoClient } from 'mongodb';
-
-const url =
-  'mongodb+srv://serhii:391q6pM1Mk65WXJD@cluster0.4v8ry.mongodb.net/events?retryWrites=true&w=majority';
+import {
+  connectDatabase,
+  insertDocument,
+  findDocuments,
+} from '../../../helpers/db-util';
 
 async function handler(req, res) {
-  const client = await MongoClient.connect(url);
-  const db = client.db();
+  const { eventId } = req.query;
+  let client;
+
+  try {
+    client = await connectDatabase();
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: 'Connecting to the database failed.' });
+  }
 
   if (req.method === 'POST') {
-    const { eventId } = req.query;
     const { name, email, text } = req.body;
 
     // Validate data
@@ -18,6 +26,7 @@ async function handler(req, res) {
       name?.trim() === '' ||
       text?.trim() === ''
     ) {
+      client.close();
       return res.status(422).json({ message: 'Invalid data.' });
     }
 
@@ -28,22 +37,34 @@ async function handler(req, res) {
       eventId,
     };
 
-    const result = await db.collection('comments').insertOne(newComment);
-    return res.status(201).json(newComment);
+    try {
+      await insertDocument(client, 'comments', newComment);
+      res.status(201).json(newComment);
+    } catch (error) {
+      res
+        .status(500)
+        .json({ message: 'Inserting data to the database failed.' });
+    }
   }
 
   if (req.method === 'GET') {
-    const { eventId } = req.query;
-    const comments = await db
-      .collection('comments')
-      .find({ eventId })
-      .sort({ _id: -1 })
-      .toArray();
-
-    return res.status(200).json(comments);
+    try {
+      const comments = await findDocuments(
+        client,
+        'comments',
+        { eventId },
+        { _id: -1 }
+      );
+      res.status(200).json(comments);
+    } catch (error) {
+      res
+        .status(500)
+        .json({ message: 'Getting comments from database failed.' });
+    }
   }
 
   client.close();
+  return res;
 }
 
 export default handler;

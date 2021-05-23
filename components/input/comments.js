@@ -10,9 +10,13 @@ function Comments({ eventId }) {
 
   useEffect(() => {
     if (showComments) {
+      // TODO: Addd error handling
       fetch(`/api/comments/${eventId}`)
         .then(response => response.json())
-        .then(comments => setCommnetItems(comments));
+        .then(comments => {
+          console.log(comments);
+          setCommnetItems(comments);
+        });
     }
   }, [showComments]);
 
@@ -21,6 +25,7 @@ function Comments({ eventId }) {
   }
 
   function handleAddComment(commentData) {
+    // TODO: Addd error handling
     fetch(`/api/comments/${eventId}`, {
       method: 'POST',
       body: JSON.stringify(commentData),
