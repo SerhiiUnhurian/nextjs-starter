@@ -29,7 +29,7 @@ function Comments({ eventId }) {
       },
     })
       .then(response => response.json())
-      .then(comment => console.log(comment));
+      .then(comment => setCommnetItems([...commentItems, comment]));
   }
 
   return (
