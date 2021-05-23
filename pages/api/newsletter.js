@@ -1,7 +1,7 @@
 import { MongoClient } from 'mongodb';
 
 const url =
-  'mongodb+srv://serhii:391q6pM1Mk65WXJD@cluster0.4v8ry.mongodb.net/newsletters?retryWrites=true&w=majority';
+  'mongodb+srv://serhii:391q6pM1Mk65WXJD@cluster0.4v8ry.mongodb.net/events?retryWrites=true&w=majority';
 
 async function handler(req, res) {
   if (req.method === 'POST') {
@@ -14,7 +14,7 @@ async function handler(req, res) {
 
     const client = await MongoClient.connect(url);
     const db = client.db();
-    const collection = db.collection('emails');
+    const collection = db.collection('newsletters');
     await collection.insertOne({ email });
     client.close();
 
